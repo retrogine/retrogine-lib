@@ -1,17 +1,9 @@
 from typing import List, Callable
 
 import pyglet
-from pyglet.image import AbstractImage
 from pyglet.window import FPSDisplay
 
 from retrogine.data_loader import load_data_file, NoSpriteException, NoPaletteException
-
-
-class Blitable:
-    def __init__(self, image: AbstractImage, x: int, y: int):
-        self.image = image
-        self.x = x
-        self.y = y
 
 
 pyglet.gl.glEnable(pyglet.gl.GL_TEXTURE_2D)
@@ -25,7 +17,6 @@ _number_rows = -1
 _show_fps = False
 _desired_fps: int
 _fps_display: FPSDisplay = None
-_to_blit: List[Blitable] = []
 _update: Callable = None
 _draw: Callable = None
 
@@ -67,10 +58,6 @@ def retrogine(
         global _to_blit
         _draw()
 
-        for to_blit in _to_blit:
-            to_blit.image.blit(to_blit.x, to_blit.y)
-            del _to_blit[:]  # clear the list
-
         if show_fps:
             _fps_display.draw()
 
@@ -85,7 +72,7 @@ def spr(sprite_number: int, x: int, y: int, palette_number=0):
 
     sprite = sprites[sprite_number]
     image = sprite.get_image(palettes[palette_number])
-    _to_blit.append(Blitable(image, x, y))
+    image.blit(x, y, 0, 16, 16)
 
 
 def cls():
