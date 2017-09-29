@@ -28,18 +28,18 @@ class DataSprite:
     def __init__(self, number: int, data: List[int]):
         if len(data) != 16*16:
             raise InvalidSpriteSizeException('sprite should be exactly 16x16')
-        self.data = data
+        self.data: List[int] = data
         self._cache: Dict[str, ImageData] = {}
-        self._number = number
+        self._number: int = number
 
     def _apply_palette(self, palette: DataPalette):
         result = []
         for datum in self.data:
             color = palette.data[datum]
-            result.insert(0, color.alpha)
-            result.insert(0, color.blue)
-            result.insert(0, color.green)
-            result.insert(0, color.red)
+            result.append(color.red)
+            result.append(color.green)
+            result.append(color.blue)
+            result.append(color.alpha)
         return bytes(result)
 
     def get_image(self, palette: DataPalette) -> ImageData:
