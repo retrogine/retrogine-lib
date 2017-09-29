@@ -1,28 +1,104 @@
-import pyglet
+from typing import List, Callable
 
-from retrogine.data_loader import load_data_file
+import pyglet
+from pyglet.image import AbstractImage
+from pyglet.window import FPSDisplay
+
+from retrogine.data_loader import load_data_file, NoSpriteException, NoPaletteException
+
+
+class Blitable:
+    def __init__(self, image: AbstractImage, x: int, y: int):
+        self.image = image
+        self.x = x
+        self.y = y
+
 
 pyglet.gl.glEnable(pyglet.gl.GL_TEXTURE_2D)
 pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MAG_FILTER, pyglet.gl.GL_NEAREST)
 
-(sprites, palettes) = load_data_file('../test.data')
+(sprites, palettes) = load_data_file('test.data')
 
-window = pyglet.window.Window(width=480*2, height=270*2, resizable=False, fullscreen=False)
-
-main_texture = pyglet.image.Texture.create(480, 256)
-
-sprite1 = sprites[0].get_image(palettes[0])
-sprite2 = sprites[0].get_image(palettes[1])
-
-
-@window.event
-def on_draw():
-    window.clear()
-    main_texture.blit_into(sprite1, 0, 0, 1)
-    main_texture.blit_into(sprite2, 0, 32, 1)
-
-    main_texture.blit(0, 7*2, width=480*2, height=256*2)
+_window: pyglet.window.Window = None
+_number_cols = -1
+_number_rows = -1
+_show_fps = False
+_desired_fps: int
+_fps_display: FPSDisplay = None
+_to_blit: List[Blitable] = []
+_update: Callable = None
+_draw: Callable = None
 
 
-if __name__ == '__main__':
+def retrogine(
+        window_width: int,
+        window_height: int,
+        number_columns: int = 16,
+        number_rows: int = 15,
+        fullscreen=False,
+        show_fps: bool = False,
+        desired_fps: int = 30,
+        enable_os_mouse: bool = False
+):
+    global _window
+    global _number_cols
+    global _number_rows
+    global _show_fps
+    global _desired_fps
+    global _fps_display
+
+    _window = pyglet.window.Window(width=window_width, height=window_height, resizable=False, fullscreen=fullscreen)
+
+    if not enable_os_mouse:
+        _window.set_exclusive_mouse()
+
+    _number_cols = number_columns
+    _number_rows = number_rows
+    _show_fps = show_fps
+    _desired_fps = desired_fps
+    if show_fps:
+        # _fps_display = FPSDisplay(_window)
+        _fps_display = pyglet.clock.ClockDisplay()
+
+    pyglet.clock.schedule_interval(_update, 1 / 60.0)
+
+    @_window.event
+    def on_draw():
+        global _to_blit
+        _draw()
+
+        for to_blit in _to_blit:
+            to_blit.image.blit(to_blit.x, to_blit.y)
+            del _to_blit[:]  # clear the list
+
+        if show_fps:
+            _fps_display.draw()
+
     pyglet.app.run()
+
+
+def spr(sprite_number: int, x: int, y: int, palette_number=0):
+    if sprite_number not in sprites:
+        raise NoSpriteException('No sprite for id: {}'.format(sprite_number))
+    if len(palettes) <= palette_number:
+        raise NoPaletteException('No palette for index: {}'.format(palette_number))
+
+    sprite = sprites[sprite_number]
+    image = sprite.get_image(palettes[palette_number])
+    _to_blit.append(Blitable(image, x, y))
+
+
+def cls():
+    _window.clear()
+
+
+def update(func: Callable):
+    global _update
+    _update = func
+    return func
+
+
+def draw(func: Callable):
+    global _draw
+    _draw = func
+    return func

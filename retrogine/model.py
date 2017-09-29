@@ -25,11 +25,12 @@ class DataPalette:
 
 
 class DataSprite:
-    def __init__(self, data: List[int]):
+    def __init__(self, number: int, data: List[int]):
         if len(data) != 16*16:
             raise InvalidSpriteSizeException('sprite should be exactly 16x16')
         self.data = data
         self._cache: Dict[str, ImageData] = {}
+        self._number = number
 
     def _apply_palette(self, palette: DataPalette):
         result = []

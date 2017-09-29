@@ -16,3 +16,12 @@ class InvalidSpriteSizeException(BaseException):
 class InvalidSpriteValueException(BaseException):
     def __init__(self, message):
         super(InvalidSpriteValueException, self).__init__(message)
+
+
+class NoSpriteException(BaseException):
+    def __init__(self, message):
+        super(NoSpriteException, self).__init__(message)
+
+class NoPaletteException(BaseException):
+    def __init__(self, message):
+        super(NoPaletteException, self).__init__(message)

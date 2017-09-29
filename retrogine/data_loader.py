@@ -4,12 +4,14 @@ from retrogine.exceptions import *
 from retrogine.model import *
 
 
-def load_data_file(path) -> Tuple[List[DataSprite], List[DataPalette]]:
+def load_data_file(path) -> Tuple[Dict[int, DataSprite], List[DataPalette]]:
     state = None
     version = None
 
     palettes = []
-    sprites = []
+    sprites = {}
+
+    current_sprite_number: int = None
     current_sprite = []
 
     with open(path, mode='r') as data_file:
@@ -22,8 +24,11 @@ def load_data_file(path) -> Tuple[List[DataSprite], List[DataPalette]]:
                 version = line.split(' ')[-1]
             if line.startswith('['):
                 if state == '[sprites]' or len(current_sprite) > 0:
-                    sprites.append(DataSprite(current_sprite))
+                    if current_sprite_number is None:
+                        raise DataParserException("sprites must have an id specified")
+                    sprites[current_sprite_number] = DataSprite(current_sprite_number, current_sprite)
                     current_sprite = []
+                    current_sprite_number = None
 
                 state = line
             else:
@@ -46,18 +51,23 @@ def load_data_file(path) -> Tuple[List[DataSprite], List[DataPalette]]:
                     palette = DataPalette(len(palettes), colors)
                     palettes.append(palette)
                 elif state == '[sprites]':
-                    split = line.split(' ')
-                    if len(split) != 16:
-                        raise InvalidSpriteSizeException('sprite should be exactly 16 wide')
+                    if line.startswith('id='):
+                        current_sprite_number = int(line.split('=', 2)[1])
+                    else:
+                        split = line.split(' ')
+                        if len(split) != 16:
+                            raise InvalidSpriteSizeException('sprite should be exactly 16 wide')
 
-                    for number in split:
-                        value = int(number)
-                        if value < 0 or value > 15:
-                            raise InvalidSpriteValueException('sprite values must be between 0 and 15 inclusive')
-                        current_sprite.append(value)
+                        for number in split:
+                            value = int(number)
+                            if value < 0 or value > 15:
+                                raise InvalidSpriteValueException('sprite values must be between 0 and 15 inclusive')
+                            current_sprite.append(value)
 
     if len(current_sprite) > 0:
-        sprites.append(DataSprite(current_sprite))
+        if current_sprite_number is None:
+            raise DataParserException("sprites must have an id specified")
+        sprites[current_sprite_number] = DataSprite(current_sprite_number, current_sprite)
 
     print("Loaded Version " + version)
     return sprites, palettes
