@@ -9,7 +9,7 @@ from retrogine.data_loader import load_data_file, NoSpriteException, NoPaletteEx
 pyglet.gl.glEnable(pyglet.gl.GL_TEXTURE_2D)
 pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MAG_FILTER, pyglet.gl.GL_NEAREST)
 
-(sprites, palettes) = load_data_file('test.data')
+(_sprites, _palettes) = load_data_file('test.data')
 
 _window: pyglet.window.Window = None
 _number_cols = -1
@@ -65,14 +65,14 @@ def retrogine(
 
 
 def spr(sprite_number: int, x: int, y: int, palette_number=0):
-    if sprite_number not in sprites:
+    if sprite_number not in _sprites:
         raise NoSpriteException('No sprite for id: {}'.format(sprite_number))
-    if len(palettes) <= palette_number:
+    if len(_palettes) <= palette_number:
         raise NoPaletteException('No palette for index: {}'.format(palette_number))
 
-    sprite = sprites[sprite_number]
-    image = sprite.get_image(palettes[palette_number])
-    image.blit(x, y, 0, 16, 16)
+    sprite = _sprites[sprite_number]
+    image = sprite.get_image(_palettes[palette_number])
+    image.blit(x, y+16, 0, 16, -16)
 
 
 def cls():
