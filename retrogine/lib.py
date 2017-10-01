@@ -1,6 +1,7 @@
 from typing import Callable
 import retrogine.data_loader as data_loader
 from pygame.rect import Rect
+import pygame.time
 import pygame
 import sys
 
@@ -19,7 +20,11 @@ def retrogine(
     global _screen
     pygame.init()
 
-    _screen = pygame.display.set_mode((window_width, window_height))
+    size = window_width, window_height
+
+    _screen = pygame.display.set_mode(size)
+
+    clock = pygame.time.Clock()
 
     while True:
         for event in pygame.event.get():
@@ -27,9 +32,9 @@ def retrogine(
                 pygame.quit()
                 sys.exit()
 
-            _update(0)
-            _draw()
-            pygame.display.flip()
+        _update(clock.tick())
+        _draw()
+        pygame.display.flip()
 
 
 def spr(sprite_number: int, x: int, y: int, palette_number=0):
