@@ -1,5 +1,4 @@
 from retrogine.lib import *
-import retrogine.button_masks as button_masks
 
 p_x = 0
 p_y = 0
@@ -13,14 +12,14 @@ def update(delta):
     global d
     d = delta
 
-    if btn(button_masks.UP):
+    if btn(ButtonMasks.UP):
         p_y = p_y - 1
-    if btn(button_masks.DOWN):
+    if btn(ButtonMasks.DOWN):
         p_y = p_y + 1
 
-    if btn(button_masks.LEFT):
+    if btn(ButtonMasks.LEFT):
         p_x = p_x - 1
-    if btn(button_masks.RIGHT):
+    if btn(ButtonMasks.RIGHT):
         p_x = p_x + 1
 
 
@@ -46,8 +45,8 @@ def draw():
     debug(str(fps()))
     debug(str(d))
     debug(str(btns()))
-    debug("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(button_masks.UP), btn(button_masks.DOWN), btn(button_masks.LEFT),
-                                                  btn(button_masks.RIGHT)))
+    debug("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(ButtonMasks.UP), btn(ButtonMasks.DOWN), btn(ButtonMasks.LEFT),
+                                                  btn(ButtonMasks.RIGHT)))
 
 
 retrogine(1280, 720, fullscreen=False)

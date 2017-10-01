@@ -1,11 +1,47 @@
 from typing import Callable, Tuple, Dict
 import retrogine.data_loader as data_loader
-import retrogine.button_masks as button_masks
 from pygame.surface import Surface
 from pygame.rect import Rect
 from pyglet.clock import Clock
 import pygame
 import sys
+
+
+class ButtonMasks:
+    UP = 1
+    DOWN = 2
+    LEFT = 4
+    RIGHT = 8
+    A = 16
+    B = 32
+    X = 64
+    Y = 128
+    TRIGGER_L1 = 256
+    TRIGGER_L2 = 512
+    TRIGGER_R1 = 1024
+    TRIGGER_R2 = 2048
+    START = 4096
+    SELECT = 8192
+    MENU = 16384
+
+    key_codes: Dict[int, int] = {
+        pygame.K_UP: UP,
+        pygame.K_DOWN: DOWN,
+        pygame.K_LEFT: LEFT,
+        pygame.K_RIGHT: RIGHT,
+        pygame.K_w: A,
+        pygame.K_s: B,
+        pygame.K_e: X,
+        pygame.K_d: Y,
+        pygame.K_q: TRIGGER_L1,
+        pygame.K_a: TRIGGER_L2,
+        pygame.K_r: TRIGGER_R1,
+        pygame.K_f: TRIGGER_R1,
+        pygame.K_RETURN: START,
+        pygame.K_BACKSLASH: START,
+        pygame.K_ESCAPE: MENU
+    }
+
 
 _default_color = (0, 0, 0)
 _update: Callable = None
@@ -71,19 +107,17 @@ def retrogine(
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                quit_game()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    quit_game()
                 else:
-                    if event.key in button_masks.key_codes:
-                        retro_button_code = button_masks.key_codes[event.key]
+                    if event.key in ButtonMasks.key_codes:
+                        retro_button_code = ButtonMasks.key_codes[event.key]
                         _keys_down |= retro_button_code
             elif event.type == pygame.KEYUP:
-                if event.key in button_masks.key_codes:
-                    retro_button_code = button_masks.key_codes[event.key]
+                if event.key in ButtonMasks.key_codes:
+                    retro_button_code = ButtonMasks.key_codes[event.key]
                     _keys_down &= ~retro_button_code
 
         _draw()
@@ -94,6 +128,11 @@ def retrogine(
 
         pygame.display.flip()
         _clock.tick()
+
+
+def quit_game():
+    pygame.quit()
+    sys.exit()
 
 
 def btns():
