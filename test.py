@@ -12,14 +12,14 @@ def update(delta):
     global d
     d = delta
 
-    if btn(ButtonMasks.UP):
+    if btn(Buttons.UP):
         p_y = p_y - 1
-    if btn(ButtonMasks.DOWN):
+    if btn(Buttons.DOWN):
         p_y = p_y + 1
 
-    if btn(ButtonMasks.LEFT):
+    if btn(Buttons.LEFT):
         p_x = p_x - 1
-    if btn(ButtonMasks.RIGHT):
+    if btn(Buttons.RIGHT):
         p_x = p_x + 1
 
 
@@ -45,8 +45,10 @@ def draw():
     debug(str(fps()))
     debug(str(d))
     debug(str(btns()))
-    debug("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(ButtonMasks.UP), btn(ButtonMasks.DOWN), btn(ButtonMasks.LEFT),
-                                                  btn(ButtonMasks.RIGHT)))
+    debug("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(Buttons.UP), btn(Buttons.DOWN), btn(Buttons.LEFT), btn(Buttons.RIGHT)))
+    debug("A:{} B:{} X:{} Y:{}".format(btn(Buttons.A), btn(Buttons.B), btn(Buttons.X), btn(Buttons.Y)))
+    debug("L1:{} L2:{} R1:{} R2:{}".format(btn(Buttons.L1), btn(Buttons.L2), btn(Buttons.R1), btn(Buttons.R2)))
+    debug("Start:{} Select:{}".format(btn(Buttons.START), btn(Buttons.SELECT)))
 
 
 retrogine(1280, 720, fullscreen=False)

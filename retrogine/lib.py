@@ -7,7 +7,7 @@ import pygame
 import sys
 
 
-class ButtonMasks:
+class Buttons:
     UP = 1
     DOWN = 2
     LEFT = 4
@@ -16,10 +16,10 @@ class ButtonMasks:
     B = 32
     X = 64
     Y = 128
-    TRIGGER_L1 = 256
-    TRIGGER_L2 = 512
-    TRIGGER_R1 = 1024
-    TRIGGER_R2 = 2048
+    L1 = 256
+    L2 = 512
+    R1 = 1024
+    R2 = 2048
     START = 4096
     SELECT = 8192
     MENU = 16384
@@ -33,12 +33,12 @@ class ButtonMasks:
         pygame.K_s: B,
         pygame.K_e: X,
         pygame.K_d: Y,
-        pygame.K_q: TRIGGER_L1,
-        pygame.K_a: TRIGGER_L2,
-        pygame.K_r: TRIGGER_R1,
-        pygame.K_f: TRIGGER_R1,
+        pygame.K_q: L1,
+        pygame.K_a: L2,
+        pygame.K_r: R1,
+        pygame.K_f: R1,
         pygame.K_RETURN: START,
-        pygame.K_BACKSLASH: START,
+        pygame.K_BACKSLASH: SELECT,
         pygame.K_ESCAPE: MENU
     }
 
@@ -112,12 +112,12 @@ def retrogine(
                 if event.key == pygame.K_ESCAPE:
                     quit_game()
                 else:
-                    if event.key in ButtonMasks.key_codes:
-                        retro_button_code = ButtonMasks.key_codes[event.key]
+                    if event.key in Buttons.key_codes:
+                        retro_button_code = Buttons.key_codes[event.key]
                         _keys_down |= retro_button_code
             elif event.type == pygame.KEYUP:
-                if event.key in ButtonMasks.key_codes:
-                    retro_button_code = ButtonMasks.key_codes[event.key]
+                if event.key in Buttons.key_codes:
+                    retro_button_code = Buttons.key_codes[event.key]
                     _keys_down &= ~retro_button_code
 
         _draw()
@@ -135,12 +135,12 @@ def quit_game():
     sys.exit()
 
 
-def btns():
+def btns() -> int:
     global _keys_down
     return _keys_down
 
 
-def btn(key_id: int):
+def btn(key_id: int) -> bool:
     global _keys_down
     return _keys_down & key_id == key_id
 
