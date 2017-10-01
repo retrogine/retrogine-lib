@@ -52,6 +52,9 @@ def load_data_file(path) -> Tuple[Dict[int, DataSprite], List[DataPalette]]:
                     palettes.append(palette)
                 elif state == '[sprites]':
                     if line.startswith('id='):
+                        if current_sprite_number is not None:
+                            sprites[current_sprite_number] = DataSprite(current_sprite_number, current_sprite)
+                            current_sprite = []
                         current_sprite_number = int(line.split('=', 2)[1])
                     else:
                         split = line.split(' ')
