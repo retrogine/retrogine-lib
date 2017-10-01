@@ -18,13 +18,9 @@ def draw():
     global i
     cls()
 
-    for j in range(16):
-        spr(1, j * 16, 0, j % 2)
-        spr(1, j * 16, 14*16, j % 2)
-
-    for j in range(15):
-        spr(1, 0, j * 16, j % 2)
-        spr(1, 15 * 16, j * 16, (j+1) % 2)
+    for y in range(12):
+        for x in range(20):
+            spr(1, x * 16, y * 16, (x + y) % 2)
 
     spr(1, 16, 0, 1)
     spr(1, 32, 0, 0)
@@ -36,8 +32,9 @@ def draw():
     spr(0, 180, 100, 0)
     spr(0, 200, 100, 0)
     spr(0, 80 + i, 100, 1)
-    text(fps())
-    text(d)
+    text(str(fps()))
+    text(str(d))
 
 
-retrogine(1280, 720)
+retrogine(1280, 720, fullscreen=False)
+# retrogine(1280, 720)
