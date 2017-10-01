@@ -22,8 +22,9 @@ _update_rate: int
 def retrogine(
         window_width: int,
         window_height: int,
-        tiles_wide: int = 16,
-        tiles_tall: int = 15,
+        tiles_wide: int = 20,
+        tiles_tall: int = 12,
+        scale_size: int = 4,
         update_rate: int = 30,
         fullscreen: bool = False
 ):
@@ -40,6 +41,7 @@ def retrogine(
         flags |= pygame.FULLSCREEN
 
     pygame.init()
+    pygame.mouse.set_visible(False)
 
     _debug_font = pygame.font.SysFont("monospace", 15)
 
@@ -47,8 +49,14 @@ def retrogine(
 
     _real_screen = pygame.display.set_mode(size, flags)
     _screen = Surface((tiles_wide * 16, tiles_tall * 16))
-    scale_size = (window_width - (window_width % 16), window_height - (window_height % 16))
-    screen_offset = ((window_width % 16) / 2, (window_height % 16) / 2)
+    scale_size = (tiles_wide * 16 * scale_size, tiles_tall * 16 * scale_size)
+    x_off = (window_width - scale_size[0]) / 2
+    if x_off < 0:
+        x_off = 0
+    y_off = (window_height - scale_size[1]) / 2
+    if y_off < 0:
+        y_off = 0
+    screen_offset = (x_off, y_off)
 
     _clock = Clock()
     _clock.schedule_interval(_update, 1 / update_rate)
@@ -68,7 +76,7 @@ def retrogine(
 
         # _real_screen.blit(_screen, (0, 0))
         # rect = Rect((0, 0), )
-        _real_screen.fill((255, 0, 0))
+        _real_screen.fill((0, 255, 0))
         _real_screen.blit(pygame.transform.scale(_screen, scale_size), screen_offset)
 
         pygame.display.flip()
@@ -93,7 +101,7 @@ def text(txt: str, color: Tuple = (255, 255, 255), position: Tuple = None):
         position = (_last_debug_pos[0], _last_debug_pos[1] + _debug_font.get_height() + 1)
     _last_debug_pos = position
 
-    label = _debug_font.render(str(txt), 0, color)
+    label = _debug_font.render(txt, 0, color)
     _screen.blit(label, position)
 
 
