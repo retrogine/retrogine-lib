@@ -1,5 +1,6 @@
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Dict
 import retrogine.data_loader as data_loader
+import retrogine.button_masks as button_masks
 from pygame.surface import Surface
 from pygame.rect import Rect
 from pyglet.clock import Clock
@@ -15,6 +16,7 @@ _debug_font: pygame.font.Font = None
 _last_debug_pos: Tuple = (0, 0)
 _clock: Clock
 _update_rate: int
+_keys_down: int = 0
 
 (_sprites, _palettes) = data_loader.load_data_file('test.data')
 
@@ -34,6 +36,7 @@ def retrogine(
     global _clock
     global _last_debug_pos
     global _update_rate
+    global _keys_down
     _update_rate = update_rate
 
     flags = pygame.DOUBLEBUF | pygame.HWSURFACE
@@ -70,18 +73,33 @@ def retrogine(
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                else:
+                    if event.key in button_masks.key_codes:
+                        retro_button_code = button_masks.key_codes[event.key]
+                        _keys_down |= retro_button_code
+            elif event.type == pygame.KEYUP:
+                if event.key in button_masks.key_codes:
+                    retro_button_code = button_masks.key_codes[event.key]
+                    _keys_down &= ~retro_button_code
 
         _last_debug_pos = (0, -_debug_font.get_height())
         _draw()
 
-        # _real_screen.blit(_screen, (0, 0))
-        # rect = Rect((0, 0), )
         _real_screen.fill((0, 255, 0))
         _real_screen.blit(pygame.transform.scale(_screen, scale_size), screen_offset)
 
         pygame.display.flip()
         _clock.tick()
-        # print(_clock.get_fps())
+
+
+def btns():
+    global _keys_down
+    return _keys_down
+
+
+def btn(key_id: int):
+    global _keys_down
+    return _keys_down & key_id == key_id
 
 
 def fps() -> int:
