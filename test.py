@@ -43,11 +43,11 @@ def draw():
     spr(0, 180, 100, 0)
     spr(0, 200, 100, 0)
     spr(0, p_x, p_y, 1)
-    text(str(fps()))
-    text(str(d))
-    text(str(btns()))
-    text("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(button_masks.UP), btn(button_masks.DOWN), btn(button_masks.LEFT),
-                                                 btn(button_masks.RIGHT)))
+    debug(str(fps()))
+    debug(str(d))
+    debug(str(btns()))
+    debug("UP:{} DOWN:{} LEFT:{} RIGHT:{}".format(btn(button_masks.UP), btn(button_masks.DOWN), btn(button_masks.LEFT),
+                                                  btn(button_masks.RIGHT)))
 
 
 retrogine(1280, 720, fullscreen=False)

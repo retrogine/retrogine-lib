@@ -13,6 +13,7 @@ _draw: Callable = None
 _real_screen: Surface = None
 _screen: Surface = None
 _debug_font: pygame.font.Font = None
+_debug_surface: Surface = None
 _last_debug_pos: Tuple = (0, 0)
 _clock: Clock
 _update_rate: int
@@ -33,6 +34,7 @@ def retrogine(
     global _real_screen
     global _screen
     global _debug_font
+    global _debug_surface
     global _clock
     global _last_debug_pos
     global _update_rate
@@ -51,6 +53,8 @@ def retrogine(
     size = window_width, window_height
 
     _real_screen = pygame.display.set_mode(size, flags)
+    _debug_surface = Surface(size).convert_alpha()
+
     _screen = Surface((tiles_wide * 16, tiles_tall * 16))
     scale_size = (tiles_wide * 16 * scale_size, tiles_tall * 16 * scale_size)
     x_off = (window_width - scale_size[0]) / 2
@@ -82,11 +86,11 @@ def retrogine(
                     retro_button_code = button_masks.key_codes[event.key]
                     _keys_down &= ~retro_button_code
 
-        _last_debug_pos = (0, -_debug_font.get_height())
         _draw()
 
         _real_screen.fill((0, 255, 0))
         _real_screen.blit(pygame.transform.scale(_screen, scale_size), screen_offset)
+        _real_screen.blit(_debug_surface, (0, 0))
 
         pygame.display.flip()
         _clock.tick()
@@ -113,18 +117,22 @@ def spr(sprite_number: int, x: int, y: int, palette_number=0):
     _screen.blit(surface, Rect(x, y, 16, 16))
 
 
-def text(txt: str, color: Tuple = (255, 255, 255), position: Tuple = None):
+def debug(txt: str, color: Tuple = (255, 255, 255), position: Tuple = None):
     global _last_debug_pos
     if not position:
         position = (_last_debug_pos[0], _last_debug_pos[1] + _debug_font.get_height() + 1)
     _last_debug_pos = position
 
     label = _debug_font.render(txt, 0, color)
-    _screen.blit(label, position)
+    _debug_surface.blit(label, position)
 
 
 def cls(color=_default_color):
+    global _last_debug_pos
+
     _screen.fill(color)
+    _last_debug_pos = (0, -_debug_font.get_height())
+    _debug_surface.fill((0, 0, 0, 0))
 
 
 def update(func: Callable):
