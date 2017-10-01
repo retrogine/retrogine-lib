@@ -34,6 +34,9 @@ def update(delta):
         if was_down:
             was_down = False
 
+    if btn(Buttons.MENU):
+        quit_game()
+
 
 @draw
 def draw():

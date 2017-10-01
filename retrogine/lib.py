@@ -109,12 +109,9 @@ def retrogine(
             if event.type == pygame.QUIT:
                 quit_game()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    quit_game()
-                else:
-                    if event.key in Buttons.key_codes:
-                        retro_button_code = Buttons.key_codes[event.key]
-                        _keys_down |= retro_button_code
+                if event.key in Buttons.key_codes:
+                    retro_button_code = Buttons.key_codes[event.key]
+                    _keys_down |= retro_button_code
             elif event.type == pygame.KEYUP:
                 if event.key in Buttons.key_codes:
                     retro_button_code = Buttons.key_codes[event.key]
