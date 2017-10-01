@@ -1,7 +1,6 @@
 from typing import List, Dict
 
 import pygame
-from pyglet.image import ImageData
 import pygame.surface
 
 from retrogine.exceptions import InvalidSpriteSizeException
@@ -27,15 +26,17 @@ class DataPalette:
 
 class DataSprite:
     def __init__(self, number: int, data: List[int]):
-        if len(data) != 16*16:
+        if len(data) != 16 * 16:
             raise InvalidSpriteSizeException('sprite should be exactly 16x16')
         self.data: List[int] = data
-        self._cache: Dict[str, ImageData] = {}
+        self._cache: Dict[str, pygame.surface.Surface] = {}
         self._number: int = number
 
     def get_image(self, palette: DataPalette) -> pygame.surface.Surface:
-        surface = pygame.Surface((16, 16)).convert_alpha()
+        if palette.palette_number in self._cache:
+            return self._cache[palette.palette_number]
 
+        surface = pygame.Surface((16, 16)).convert_alpha()
         count = 0
         for datum in self.data:
             x = int(count % 16)
@@ -46,4 +47,5 @@ class DataSprite:
 
             count += 1
 
+        self._cache[palette.palette_number] = surface
         return surface
