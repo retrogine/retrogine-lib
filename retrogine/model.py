@@ -27,7 +27,7 @@ class DataPalette:
 class DataSprite:
     def __init__(self, number: int, data: List[int]):
         if len(data) != 16 * 16:
-            raise InvalidSpriteSizeException('sprite should be exactly 16x16')
+            raise InvalidSpriteSizeException('sprite should be exactly 16x16 ({}) but was {}'.format(16*16, len(data)))
         self.data: List[int] = data
         self._cache: Dict[str, pygame.surface.Surface] = {}
         self._number: int = number

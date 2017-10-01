@@ -29,4 +29,4 @@ def draw():
     text(d)
 
 
-retrogine(1000, 750)
+retrogine(1280, 720)
